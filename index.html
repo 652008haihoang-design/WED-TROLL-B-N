@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Kéo lên mức lương bạn mong muốn 💸</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: radial-gradient(circle at top, #1e1b4b 0%, #090d16 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #f8fafc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      touch-action: none;
+    }
+
+    .card {
+      width: min(94vw, 620px);
+      background: rgba(15, 23, 42, 0.88);
+      border: 2px solid rgba(148, 163, 184, 0.2);
+      border-radius: 28px;
+      padding: 28px 22px 34px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65);
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.35rem, 4.5vw, 1.9rem);
+      font-weight: 900;
+      background: linear-gradient(90deg, #fde047, #fb923c, #f43f5e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    .sub {
+      margin: 0 0 20px;
+      font-size: 0.95rem;
+      color: #94a3b8;
+    }
+
+    .salary-box {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 8px;
+      background: rgba(30, 41, 59, 0.95);
+      border: 2px solid #334155;
+      border-radius: 20px;
+      padding: 12px 24px;
+      margin-bottom: 14px;
+      transition: border-color 0.2s, transform 0.15s;
+    }
+
+    .salary-num {
+      font-size: clamp(2.2rem, 7vw, 3.2rem);
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+      color: #4ade80;
+    }
+
+    .salary-unit {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #cbd5e1;
+    }
+
+    .roast-bubble {
+      min-height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(244, 63, 94, 0.14);
+      border: 1px dashed rgba(244, 63, 94, 0.5);
+      color: #fda4af;
+      border-radius: 14px;
+      padding: 8px 14px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      transition: all 0.15s ease;
+    }
+
+    .stage-wrap {
+      position: relative;
+      width: 100%;
+      height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: visible;
+    }
+
+    svg#sliderSvg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+      display: block;
+    }
+
+    .scale-labels {
+      display: flex;
+      justify-content: space-between;
+      padding: 0 28px;
+      margin-top: -18px;
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: #64748b;
+    }
+
+    .scale-labels span.limit-mark {
+      color: #f43f5e;
+    }
+
+    .action-area {
+      margin-top: 24px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .confirm-btn {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      padding: 13px 26px;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(34, 197, 94, 0.35);
+      transition: transform 0.15s ease, background 0.2s;
+      position: relative;
+      z-index: 10;
+    }
+
+    .confirm-btn:active {
+      transform: scale(0.95);
+    }
+
+    .sound-toggle {
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid #334155;
+      color: #cbd5e1;
+      border-radius: 999px;
+      padding: 5px 11px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      padding: 20px;
+    }
+
+    .modal-box {
+      background: #1e293b;
+      border: 2px solid #f43f5e;
+      border-radius: 24px;
+      padding: 26px;
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .modal-box h2 {
+      margin: 0 0 10px;
+      color: #fde047;
+      font-size: 1.4rem;
+    }
+
+    .modal-box p {
+      color: #e2e8f0;
+      line-height: 1.5;
+      margin: 0 0 18px;
+    }
+
+    .modal-box button {
+      background: #f43f5e;
+      color: white;
+      border: none;
+      padding: 11px 22px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card" id="card">
+    <button class="sound-toggle" id="soundBtn">🔊 Âm thanh: BẬT</button>
+    <h1>KÉO LÊN MỨC LƯƠNG BẠN MONG MUỐN</h1>
+    <p class="sub">Công ty rất trân trọng năng lực của bạn, cứ kéo thoải mái nhé! 😉</p>
+
+    <div class="salary-box" id="salaryBox">
+      <span class="salary-num" id="salaryDisplay">15</span>
+      <span class="salary-unit">triệu / tháng</span>
+    </div>
+
+    <div class="roast-bubble" id="roastText">
+      👆 Kéo cục tròn bên dưới sang phải để chốt deal!
+    </div>
+
+    <div class="stage-wrap" id="stageWrap">
+      <svg id="sliderSvg" viewBox="0 0 560 220" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id="trackFillGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#22c55e" />
+            <stop offset="70%" stop-color="#eab308" />
+            <stop offset="100%" stop-color="#f43f5e" />
+          </linearGradient>
+          <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="4" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
+        </defs>
+
+        <!-- Đường ray nền (bị uốn cong khi kéo lố) -->
+        <path id="trackBg" d="M 30 110 L 530 110" stroke="#1e293b" stroke-width="18" stroke-linecap="round" fill="none" />
+        <path id="trackBorder" d="M 30 110 L 530 110" stroke="#334155" stroke-width="20" stroke-linecap="round" fill="none" opacity="0.5" />
+
+        <!-- Vạch cảnh báo 2/5 (x = 30 + 500 * 0.4 = 230) -->
+        <g id="wallGroup" transform="translate(230, 110)">
+          <line x1="0" y1="-26" x2="0" y2="26" stroke="#f43f5e" stroke-width="3" stroke-dasharray="4 4" />
+          <text id="wallEmoji" x="14" y="-22" font-size="24" opacity="0">✋🛑</text>
+        </g>
+
+        <!-- Phần thanh màu đã kéo -->
+        <path id="trackFill" d="M 30 110 L 100 110" stroke="url(#trackFillGrad)" stroke-width="16" stroke-linecap="round" fill="none" />
+
+        <!-- Dây thun nối từ chốt 2/5 tới ngón tay khi kéo lố -->
+        <path id="rubberBand" d="" stroke="#f43f5e" stroke-width="10" stroke-linecap="round" fill="none" opacity="0" />
+
+        <!-- Cục kéo biến hình -->
+        <g id="knobGroup" transform="translate(100, 110)" style="cursor: grab;">
+          <!-- Vòng hào quang -->
+          <ellipse id="knobAura" cx="0" cy="0" rx="30" ry="30" fill="#22c55e" opacity="0.22" />
+          <!-- Thân nút kéo (ellipse co giãn theo vector kéo) -->
+          <ellipse id="knobBody" cx="0" cy="0" rx="26" ry="26" fill="#ffffff" stroke="#22c55e" stroke-width="4" />
+          <!-- Biểu cảm khuôn mặt -->
+          <text id="knobFace" x="0" y="7" text-anchor="middle" font-size="26">😎</text>
+          <!-- Số bay theo ngay trên đầu nút kéo -->
+          <g id="floatingTag" transform="translate(0, -44)">
+            <rect x="-32" y="-16" width="64" height="24" rx="8" fill="#0f172a" stroke="#4ade80" stroke-width="2" id="tagBox" />
+            <text id="tagText" x="0" y="1" text-anchor="middle" fill="#4ade80" font-size="13" font-weight="900">15</text>
+          </g>
+        </g>
+      </svg>
+    </div>
+
+    <div class="scale-labels">
+      <span>1</span>
+      <span>20</span>
+      <span class="limit-mark">40 (Giới hạn sếp)</span>
+      <span>60</span>
+      <span>80</span>
+      <span>100</span>
+    </div>
+
+    <div class="action-area">
+      <button class="confirm-btn" id="confirmBtn">Chốt mức lương này ✅</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box">
+      <h2 id="modalTitle">🎉 CHÚC MỪNG BẠN!</h2>
+      <p id="modalMsg">Hợp đồng đã được gửi lên vũ trụ!</p>
+      <button id="closeModalBtn">Biết rồi, khổ lắm!</button>
+    </div>
+  </div>
+
+  <script>
+    const svg = document.getElementById('sliderSvg');
+    const trackBg = document.getElementById('trackBg');
+    const trackBorder = document.getElementById('trackBorder');
+    const trackFill = document.getElementById('trackFill');
+    const rubberBand = document.getElementById('rubberBand');
+    const knobGroup = document.getElementById('knobGroup');
+    const knobBody = document.getElementById('knobBody');
+    const knobAura = document.getElementById('knobAura');
+    const knobFace = document.getElementById('knobFace');
+    const tagBox = document.getElementById('tagBox');
+    const tagText = document.getElementById('tagText');
+    const wallEmoji = document.getElementById('wallEmoji');
+
+    const salaryDisplay = document.getElementById('salaryDisplay');
+    const salaryBox = document.getElementById('salaryBox');
+    const roastText = document.getElementById('roastText');
+    const confirmBtn = document.getElementById('confirmBtn');
+    const soundBtn = document.getElementById('soundBtn');
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalMsg = document.getElementById('modalMsg');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+
+    // Tọa độ hệ quy chiếu SVG (560 x 220)
+    const START_X = 30;
+    const END_X = 530;
+    const TRACK_LEN = END_X - START_X; // 500
+    const LIMIT_RATIO = 0.4; // Đúng 2/5 cây = 40
+    const LIMIT_X = START_X + TRACK_LEN * LIMIT_RATIO; // 230
+    const BASE_Y = 110;
+
+    let isDragging = false;
+    let soundOn = true;
+    let snapCount = 0;
+    let dodgeCount = 0;
+
+    // Trạng thái vị trí hiện tại (val: 1..100)
+    let currentVal = 15;
+    // Tọa độ điểm chốt thực trên thanh (bị khóa tối đa tại LIMIT_X)
+    let anchorX = START_X + ((currentVal - 1) / 99) * TRACK_LEN;
+
+    // Tọa độ tay kéo tự do (để bẻ cong dây mượt 60fps không rung)
+    let pullX = anchorX;
+    let pullY = BASE_Y;
+    let targetPullX = anchorX;
+    let targetPullY = BASE_Y;
+    let velX = 0;
+    let velY = 0;
+
+    // Web Audio API tạo âm thanh vui nhộn không cần file ngoài
+    let audioCtx = null;
+    function playTone(type) {
+      if (!soundOn) return;
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        const now = audioCtx.currentTime;
+
+        if (type === 'boing') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(180, now);
+          osc.frequency.exponentialRampToValueAtTime(520, now + 0.14);
+          osc.frequency.exponentialRampToValueAtTime(220, now + 0.32);
+          gain.gain.setValueAtTime(0.22, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.34);
+          osc.start(now);
+          osc.stop(now + 0.35);
+        } else if (type === 'snap') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(420, now);
+          osc.frequency.exponentialRampToValueAtTime(55, now + 0.25);
+          gain.gain.setValueAtTime(0.3, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.26);
+          osc.start(now);
+          osc.stop(now + 0.27);
+        } else if (type === 'dodge') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(500, now);
+          osc.frequency.exponentialRampToValueAtTime(880, now + 0.1);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.11);
+          osc.start(now);
+          osc.stop(now + 0.12);
+        }
+      } catch (e) {}
+    }
+
+    soundBtn.addEventListener('click', () => {
+      soundOn = !soundOn;
+      soundBtn.textContent = soundOn ? '🔊 Âm thanh: BẬT' : '🔇 Âm thanh: TẮT';
+    });
+
+    const roastsNormal = [
+      "Mức này khiêm tốn quá, kéo thêm đi ngại gì!",
+      "Ổn áp đấy, sếp duyệt trong 1 nốt nhạc!",
+      "Tầm này sống khỏe rồi, kéo nữa coi sao?"
+    ];
+
+    const roastsBlocked = [
+      "✋ DỪNG! Quỹ lương công ty tới đây là hết mực rồi!",
+      "🥵 Kéo gãy cả thanh rồi bạn ơi, không qua nổi 40 đâu!",
+      "🤡 Tỉnh ngủ đi! Lương 40 là kịch trần nhân phẩm rồi!",
+      "💀 Cố nữa là đứt dây thun văng về 1 triệu ráng chịu nha!",
+      "🧱 Bức tường ngân sách dày 10 mét, kéo vô ích thôi!",
+      "🚒 Alo cứu hỏa! Thanh trượt sắp bốc cháy vì lòng tham!"
+    ];
+
+    // Chuyển đổi tọa độ chuột/chạm sang tọa độ SVG chính xác (không lệch trên mọi màn hình)
+    function clientToSvg(clientX, clientY) {
+      const rect = svg.getBoundingClientRect();
+      const scaleX = 560 / rect.width;
+      const scaleY = 220 / rect.height;
+      return {
+        x: (clientX - rect.left) * scaleX,
+        y: (clientY - rect.top) * scaleY
+      };
+    }
+
+    function onPointerDown(e) {
+      e.preventDefault();
+      isDragging = true;
+      knobGroup.style.cursor = 'grabbing';
+      updateTargetFromEvent(e);
+    }
+
+    function onPointerMove(e) {
+      if (!isDragging) return;
+      e.preventDefault();
+      updateTargetFromEvent(e);
+    }
+
+    function onPointerUp() {
+      if (!isDragging) return;
+      isDragging = false;
+      knobGroup.style.cursor = 'grab';
+
+      const overDx = pullX - LIMIT_X;
+      const overDy = pullY - BASE_Y;
+      const stretchDist = Math.hypot(Math.max(0, overDx), overDy);
+
+      if (stretchDist > 25) {
+        playTone('boing');
+      }
+
+      // Khi thả tay: bật ngược đúng về mốc giới hạn 2/5 (40)
+      targetPullX = anchorX;
+      targetPullY = BASE_Y;
+    }
+
+    function updateTargetFromEvent(e) {
+      const pt = e.touches ? e.touches[0] : e;
+      const svgPt = clientToSvg(pt.clientX, pt.clientY);
+
+      if (svgPt.x <= LIMIT_X) {
+        // Vùng hợp lệ: 1 -> 40 (từ x=30 đến x=230)
+        const clampedX = Math.max(START_X, svgPt.x);
+        anchorX = clampedX;
+        targetPullX = clampedX;
+        // Cho phép uốn nhẹ lên xuống cho dẻo
+        targetPullY = BASE_Y + Math.max(-25, Math.min(25, (svgPt.y - BASE_Y) * 0.25));
+
+        const ratio = (clampedX - START_X) / TRACK_LEN; // 0 -> 0.4
+        currentVal = Math.max(1, Math.min(40, Math.round(1 + ratio * 99)));
+      } else {
+        // Vùng CẤM (vượt quá 2/5): khóa anchorX tại 40, kéo giãn dây cao su 2D
+        anchorX = LIMIT_X;
+        currentVal = 40;
+
+        const rawDx = svgPt.x - LIMIT_X;
+        const rawDy = svgPt.y - BASE_Y;
+
+        // Lực cản đàn hồi phi tuyến (càng kéo càng nặng tay, không giật cục)
+        const resistX = Math.tanh(rawDx / 210) * 240;
+        const resistY = Math.tanh(rawDy / 140) * 85;
+
+        targetPullX = LIMIT_X + resistX;
+        targetPullY = BASE_Y + resistY;
+
+        const stretch = Math.hypot(resistX, resistY);
+
+        // Nếu cố kéo quá căng (> 225px) -> ĐỨT DÂY TRỪNG PHẠT!
+        if (stretch > 228) {
+          triggerSnapPunishment();
+        }
+      }
+    }
+
+    function triggerSnapPunishment() {
+      isDragging = false;
+      knobGroup.style.cursor = 'grab';
+      snapCount++;
+      playTone('snap');
+
+      const punishedVal = snapCount === 1 ? 5 : 1;
+      currentVal = punishedVal;
+      anchorX = START_X + ((punishedVal - 1) / 99) * TRACK_LEN;
+      targetPullX = anchorX;
+      targetPullY = BASE_Y;
+      // Tạo cú giật lò xo ngược
+      velX = -35;
+      velY = (Math.random() - 0.5) * 40;
+
+      roastText.textContent = snapCount === 1
+        ? "💥 BỤP!! Đứt dây rồi! Tham thì thâm, lương tụt về 5 triệu!"
+        : "💀 LÌ LỢM LẦN 2! Sếp hạ lương thẳng xuống 1 TRIỆU thử việc!";
+    }
+
+    // Vòng lặp render 60fps siêu mượt, hoàn toàn không rung khung hình
+    function animate() {
+      if (isDragging) {
+        // Bám sát tay người dùng cực mượt (lerp hệ số cao, 0% rung lắc)
+        pullX += (targetPullX - pullX) * 0.45;
+        pullY += (targetPullY - pullY) * 0.45;
+        velX = 0;
+        velY = 0;
+      } else {
+        // Vật lý lò xo giảm chấn khi thả tay
+        const stiffness = 0.16;
+        const damping = 0.72;
+        const ax = (targetPullX - pullX) * stiffness;
+        const ay = (targetPullY - pullY) * stiffness;
+        velX = (velX + ax) * damping;
+        velY = (velY + ay) * damping;
+        pullX += velX;
+        pullY += velY;
+      }
+
+      renderVisuals();
+      requestAnimationFrame(animate);
+    }
+
+    function renderVisuals() {
+      const stretchX = Math.max(0, pullX - LIMIT_X);
+      const stretchY = pullY - BASE_Y;
+      const tension = Math.hypot(stretchX, stretchY); // 0 -> ~230
+
+      // 1. Bẻ cong cả đường ray chính như dây cung theo lực kéo
+      const bendCtrlX = (START_X + END_X) * 0.5 + stretchX * 0.55;
+      const bendCtrlY = BASE_Y + stretchY * 0.85;
+      const trackD = `M ${START_X} ${BASE_Y} Q ${bendCtrlX.toFixed(1)} ${bendCtrlY.toFixed(1)} ${END_X} ${BASE_Y}`;
+      trackBg.setAttribute('d', trackD);
+      trackBorder.setAttribute('d', trackD);
+
+      // 2. Vẽ phần thanh đã lấp đầy tới chốt anchorX
+      const tAnchor = (anchorX - START_X) / TRACK_LEN;
+      // Điểm trên đường cong Bezier tại tAnchor
+      const bx = (1 - tAnchor) * (1 - tAnchor) * START_X + 2 * (1 - tAnchor) * tAnchor * bendCtrlX + tAnchor * tAnchor * END_X;
+      const by = (1 - tAnchor) * (1 - tAnchor) * BASE_Y + 2 * (1 - tAnchor) * tAnchor * bendCtrlY + tAnchor * tAnchor * BASE_Y;
+      const ctrlFillX = (START_X + bx) * 0.5;
+      const ctrlFillY = (BASE_Y + by) * 0.5 + stretchY * 0.25;
+      trackFill.setAttribute('d', `M ${START_X} ${BASE_Y} Q ${ctrlFillX.toFixed(1)} ${ctrlFillY.toFixed(1)} ${bx.toFixed(1)} ${by.toFixed(1)}`);
+
+      // 3. Nếu đang kéo lố qua mốc 2/5: vẽ dây cao su nối từ chốt 40 tới nút kéo
+      if (tension > 3) {
+        rubberBand.setAttribute('opacity', '1');
+        const midX = (bx + pullX) * 0.5;
+        const midY = (by + pullY) * 0.5;
+        rubberBand.setAttribute('d', `M ${bx.toFixed(1)} ${by.toFixed(1)} Q ${midX.toFixed(1)} ${midY.toFixed(1)} ${pullX.toFixed(1)} ${pullY.toFixed(1)}`);
+        // Dây càng căng càng mảnh lại như dây thun sắp đứt
+        const bandWidth = Math.max(4, 15 - tension * 0.048);
+        rubberBand.setAttribute('stroke-width', bandWidth.toFixed(1));
+        wallEmoji.setAttribute('opacity', Math.min(1, tension / 40).toFixed(2));
+      } else {
+        rubberBand.setAttribute('opacity', '0');
+        wallEmoji.setAttribute('opacity', '0');
+      }
+
+      // 4. Biến dạng nút kéo (kéo dài như kẹo cao su hướng về ngón tay)
+      const angle = Math.atan2(pullY - by, pullX - bx) * (180 / Math.PI);
+      const rx = 26 + Math.min(26, tension * 0.13);
+      const ry = Math.max(15, 26 - tension * 0.05);
+
+      knobGroup.setAttribute('transform', `translate(${pullX.toFixed(1)}, ${pullY.toFixed(1)})`);
+      knobBody.setAttribute('transform', `rotate(${angle.toFixed(1)})`);
+      knobBody.setAttribute('rx', rx.toFixed(1));
+      knobBody.setAttribute('ry', ry.toFixed(1));
+      knobAura.setAttribute('rx', (rx + 5).toFixed(1));
+      knobAura.setAttribute('ry', (ry + 5).toFixed(1));
+
+      // 5. Cập nhật biểu cảm, màu sắc và câu cà khịa
+      let color = '#4ade80';
+      let face = '😎';
+
+      if (tension > 150) {
+        color = '#f43f5e';
+        face = '🤯';
+      } else if (tension > 75) {
+        color = '#fb7185';
+        face = '🥵';
+      } else if (tension > 10) {
+        color = '#f97316';
+        face = '😰';
+      } else if (currentVal >= 35) {
+        color = '#facc15';
+        face = '😏';
+      } else if (currentVal <= 5) {
+        color = '#94a3b8';
+        face = '😭';
+      }
+
+      knobBody.setAttribute('stroke', color);
+      knobAura.setAttribute('fill', color);
+      knobFace.textContent = face;
+      tagBox.setAttribute('stroke', color);
+      tagText.setAttribute('fill', color);
+      salaryDisplay.style.color = color;
+      salaryBox.style.borderColor = tension > 10 ? color : '#334155';
+
+      // Hiển thị số bên cạnh / trên nút kéo
+      if (tension > 20) {
+        // Nhảy số lẻ ảo giác khi cố kéo vượt 40
+        const fakeDecimal = Math.min(999, Math.floor(tension * 4.2));
+        tagText.textContent = `40.${String(fakeDecimal).padStart(3, '0')}`;
+        salaryDisplay.textContent = `40.${String(fakeDecimal).padStart(3, '0')}`;
+      } else {
+        tagText.textContent = currentVal;
+        salaryDisplay.textContent = currentVal;
+      }
+
+      if (isDragging) {
+        if (tension > 10) {
+          const idx = Math.min(roastsBlocked.length - 1, Math.floor(tension / 38));
+          roastText.textContent = roastsBlocked[idx];
+        } else if (currentVal <= 5 && snapCount > 0) {
+          // Giữ nguyên thông báo phạt đứt dây
+        } else {
+          const idx = Math.min(roastsNormal.length - 1, Math.floor(currentVal / 14));
+          roastText.textContent = roastsNormal[idx];
+        }
+      }
+    }
+
+    // Gắn sự kiện tương thích cả Chuột (PC) và Cảm ứng (Điện thoại)
+    svg.addEventListener('mousedown', onPointerDown);
+    window.addEventListener('mousemove', onPointerMove);
+    window.addEventListener('mouseup', onPointerUp);
+
+    svg.addEventListener('touchstart', onPointerDown, { passive: false });
+    window.addEventListener('touchmove', onPointerMove, { passive: false });
+    window.addEventListener('touchend', onPointerUp);
+
+    // Nút chốt lương cũng troll luôn: chạy trốn 3 lần đầu nếu lương >= 30
+    function dodgeButton(e) {
+      if (currentVal >= 30 && dodgeCount < 3) {
+        e.preventDefault();
+        dodgeCount++;
+        playTone('dodge');
+        const offsetX = (Math.random() > 0.5 ? 1 : -1) * (70 + Math.random() * 60);
+        const offsetY = (Math.random() - 0.5) * 50;
+        confirmBtn.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+        roastText.textContent = `🏃‍♂️ Ơ kìa, lương ${currentVal} triệu cao quá nút Chốt đơn chạy mất tiêu rồi!`;
+      }
+    }
+
+    confirmBtn.addEventListener('mouseenter', dodgeButton);
+    confirmBtn.addEventListener('click', (e) => {
+      if (currentVal >= 30 && dodgeCount < 3) {
+        dodgeButton(e);
+        return;
+      }
+      confirmBtn.style.transform = 'translate(0, 0)';
+      modalTitle.textContent = currentVal >= 35
+        ? '🫡 GHI NHẬN ĐỀ XUẤT!'
+        : '🤝 CHỐT ĐƠN THÀNH CÔNG!';
+      modalMsg.innerHTML = currentVal >= 35
+        ? `Mức lương mong muốn <b>${currentVal} triệu/tháng</b> của bạn đã được sếp lưu vào... thư mục rác để suy nghĩ thêm 5 năm nữa!`
+        : `Tuyệt vời! Bạn đã tự nguyện chốt mức lương <b>${currentVal} triệu/tháng</b>. Sáng mai đi làm sớm pha trà cho sếp nhé!`;
+      modalOverlay.style.display = 'flex';
+    });
+
+    closeModalBtn.addEventListener('click', () => {
+      modalOverlay.style.display = 'none';
+      dodgeCount = 0;
+    });
+
+    animate();
+  </script>
+</body>
+</html>
